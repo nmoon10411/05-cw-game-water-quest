@@ -1,23 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Water Quest</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GOODCCI WATER</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Water Quest</h1>
-    <p class="game-instructions">Collect 20 items to complete the game!</p>
-    <div class="stats">
-      <p>Cans Collected: <span id="current-cans">0</span></p>
-      <p>Time Left: <span id="timer">30</span>s</p>
-    </div>
-    <div id="achievements" class="achievement"></div>
-    <div class="game-grid"></div>
-    <button id="start-game">Start Game</button>
+  <div class="page-frame">
+    <header class="brand">
+      <img src="./img/cw_logo_horizontal.png" alt="charity: water" class="brand-logo" />
+    </header>
+
+    <main class="container">
+      <h1>GOODCCI WATER</h1>
+      <p class="game-instructions">Collect clean drops before time runs out!</p>
+
+      <section class="stats" aria-live="polite">
+        <p>Drops Collected: <span id="current-cans">0</span></p>
+        <p>Time Left: <span id="timer">30</span>s</p>
+      </section>
+
+      <div id="achievements" class="achievement" aria-live="polite"></div>
+
+      <section class="game-grid" aria-label="Game board"></section>
+
+      <div class="controls">
+        <button id="start-game" type="button">Start Game</button>
+        <button id="reset-game" type="button" class="hidden">Reset</button>
+      </div>
+    </main>
+
+    <footer class="footer-note">
+      <small>Made for learning — inspired by charity: water.</small>
+    </footer>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>

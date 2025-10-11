@@ -1,54 +1,156 @@
-// Game configuration and state variables
-const GOAL_CANS = 25;        // Total items needed to collect
-let currentCans = 0;         // Current number of items collected
-let gameActive = false;      // Tracks if game is currently running
-let spawnInterval;          // Holds the interval for spawning items
+// ------- config & state -------
+const GOAL_DROPS = 20;
+const ROUND_SECONDS = 30;
 
-// Creates the 3x3 game grid where items will appear
+let currentDrops = 0;
+let timeLeft = ROUND_SECONDS;
+let gameActive = false;
+let spawnInterval = null;
+let timerInterval = null;
+
+// ------- dom refs -------
+const gridEl = document.querySelector('.game-grid');
+const scoreEl = document.getElementById('current-cans');
+const timerEl = document.getElementById('timer');
+const startBtn = document.getElementById('start-game');
+const resetBtn = document.getElementById('reset-game');
+const msgEl = document.getElementById('achievements');
+
+// ------- messages -------
+const WIN = [
+  "Amazing! You brought clean water to a community!",
+  "You did it! Every drop counts!",
+  "Great job! Together, we can make a difference!"
+];
+const LOSE = [
+  "So close! Try again to collect more clean water.",
+  "Every drop matters—give it another shot!",
+  "Keep going! Clean water is worth the effort!"
+];
+
+// ------- build grid -------
 function createGrid() {
-  const grid = document.querySelector('.game-grid');
-  grid.innerHTML = ''; // Clear any existing grid cells
+  gridEl.innerHTML = '';
   for (let i = 0; i < 9; i++) {
     const cell = document.createElement('div');
-    cell.className = 'grid-cell'; // Each cell represents a grid square
-    grid.appendChild(cell);
+    cell.className = 'grid-cell';
+    gridEl.appendChild(cell);
   }
 }
-
-// Ensure the grid is created when the page loads
 createGrid();
 
-// Spawns a new item in a random grid cell
-function spawnWaterCan() {
-  if (!gameActive) return; // Stop if the game is not active
-  const cells = document.querySelectorAll('.grid-cell');
-  
-  // Clear all cells before spawning a new water can
-  cells.forEach(cell => (cell.innerHTML = ''));
+// ------- spawn logic -------
+function spawnDrop() {
+  if (!gameActive) return;
 
-  // Select a random cell from the grid to place the water can
+  const cells = [...document.querySelectorAll('.grid-cell')];
+  cells.forEach((c) => (c.innerHTML = ''));
+
   const randomCell = cells[Math.floor(Math.random() * cells.length)];
 
-  // Use a template literal to create the wrapper and water-can element
-  randomCell.innerHTML = `
-    <div class="water-can-wrapper">
-      <div class="water-can"></div>
-    </div>
-  `;
+  // 25% chance for polluted drop
+  const isPolluted = Math.random() < 0.25;
+  const img = document.createElement('img');
+  img.className = 'water-can';
+  img.src = isPolluted ? './img/water-can-transparent.png' : './img/water-can.png';
+  img.alt = isPolluted ? 'polluted water drop' : 'clean water drop';
+  img.style.filter = isPolluted ? 'grayscale(100%) brightness(0.4)' : 'none';
+  randomCell.appendChild(img);
+
+  img.addEventListener('click', () => {
+    if (!gameActive) return;
+    if (isPolluted) {
+      currentDrops = Math.max(0, currentDrops - 2);
+      flashEffect(randomCell, 'red');
+    } else {
+      currentDrops++;
+      flashEffect(randomCell, 'aqua');
+    }
+    scoreEl.textContent = currentDrops;
+    img.style.transform = 'scale(.88)';
+    setTimeout(() => (img.style.transform = 'scale(1)'), 120);
+  });
+
+  // auto-despawn after 900ms
+  setTimeout(() => {
+    if (randomCell.contains(img)) randomCell.innerHTML = '';
+  }, 900);
 }
 
-// Initializes and starts a new game
+// ------- visual feedback -------
+function flashEffect(cell, color) {
+  cell.style.boxShadow = `0 0 10px 4px ${color}`;
+  setTimeout(() => (cell.style.boxShadow = 'none'), 250);
+}
+
+// ------- game flow -------
 function startGame() {
-  if (gameActive) return; // Prevent starting a new game if one is already active
+  if (gameActive) return;
   gameActive = true;
-  createGrid(); // Set up the game grid
-  spawnInterval = setInterval(spawnWaterCan, 1000); // Spawn water cans every second
+
+  currentDrops = 0;
+  timeLeft = ROUND_SECONDS;
+  scoreEl.textContent = currentDrops;
+  timerEl.textContent = timeLeft;
+  msgEl.textContent = '';
+  msgEl.classList.remove('win-pulse');
+
+  startBtn.disabled = true;
+  resetBtn.classList.remove('hidden');
+
+  spawnInterval = setInterval(spawnDrop, 800);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if (timeLeft <= 0) endGame();
+  }, 1000);
 }
 
 function endGame() {
-  gameActive = false; // Mark the game as inactive
-  clearInterval(spawnInterval); // Stop spawning water cans
+  gameActive = false;
+  clearInterval(spawnInterval);
+  clearInterval(timerInterval);
+  startBtn.disabled = false;
+
+  if (currentDrops >= GOAL_DROPS) {
+    msgEl.textContent = WIN[Math.floor(Math.random() * WIN.length)];
+    msgEl.style.color = '#4FCB53';
+    msgEl.classList.add('win-pulse');
+    confettiEffect();
+  } else {
+    msgEl.textContent = LOSE[Math.floor(Math.random() * LOSE.length)];
+    msgEl.style.color = '#F5402C';
+  }
 }
 
-// Set up click handler for the start button
-document.getElementById('start-game').addEventListener('click', startGame);
+function resetGame() {
+  gameActive = false;
+  clearInterval(spawnInterval);
+  clearInterval(timerInterval);
+  currentDrops = 0;
+  timeLeft = ROUND_SECONDS;
+  scoreEl.textContent = 0;
+  timerEl.textContent = ROUND_SECONDS;
+  msgEl.textContent = '';
+  msgEl.classList.remove('win-pulse');
+  createGrid();
+  startBtn.disabled = false;
+  resetBtn.classList.add('hidden');
+}
+
+// ------- confetti animation -------
+function confettiEffect() {
+  for (let i = 0; i < 100; i++) {
+    const conf = document.createElement('div');
+    conf.className = 'confetti';
+    conf.style.left = `${Math.random() * 100}%`;
+    conf.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+    conf.style.animationDelay = `${Math.random() * 2}s`;
+    document.body.appendChild(conf);
+    setTimeout(() => conf.remove(), 3000);
+  }
+}
+
+// ------- events -------
+startBtn.addEventListener('click', startGame);
+resetBtn.addEventListener('click', resetGame);
