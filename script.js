@@ -18,7 +18,7 @@ container.insertBefore(difficultySelect, container.querySelector('.stats'));
 // Sound effects
 const soundGood = new Audio('./waterdrop.mp3');
 const soundBad = new Audio('./explosion.wav');
-soundGood.volume = 0.5;
+soundGood.volume = 0.8;
 soundBad.volume = 0.6;
 
 let timeLeft = 30;
