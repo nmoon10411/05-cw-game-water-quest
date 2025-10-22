@@ -6,7 +6,7 @@ const resetBtn = document.getElementById('reset-game');
 const achievement = document.getElementById('achievements');
 const container = document.querySelector('.container');
 
-// Add difficulty selector
+// Difficulty selector
 const difficultySelect = document.createElement('select');
 difficultySelect.innerHTML = `
   <option value="easy">Easy</option>
@@ -14,6 +14,12 @@ difficultySelect.innerHTML = `
   <option value="hard">Hard</option>
 `;
 container.insertBefore(difficultySelect, container.querySelector('.stats'));
+
+// Sound effects
+const soundGood = new Audio('./waterdrop.aiff');
+const soundBad = new Audio('./explosion.wav');
+soundGood.volume = 0.5;
+soundBad.volume = 0.6;
 
 let timeLeft = 30;
 let score = 0;
@@ -75,7 +81,6 @@ function spawnDrop(cfg) {
     drop.textContent = "💧";
   }
 
-  // random position inside play area
   const maxX = gameGrid.clientWidth - 60;
   const maxY = gameGrid.clientHeight - 60;
   const x = Math.random() * maxX;
@@ -87,10 +92,16 @@ function spawnDrop(cfg) {
     if (isDecoy) {
       score = Math.max(0, score - 1);
       achievement.textContent = "Oops — that’s dirty water! (-1)";
+      createSplash('bad', x + 30, y + 30);
+      soundBad.currentTime = 0;
+      soundBad.play();
     } else {
       score++;
       currentCans.textContent = score;
       checkMilestones(score);
+      createSplash('good', x + 30, y + 30);
+      soundGood.currentTime = 0;
+      soundGood.play();
       if (score >= targetScore) endGame(true);
     }
     drop.style.opacity = 0;
@@ -99,6 +110,15 @@ function spawnDrop(cfg) {
 
   gameGrid.appendChild(drop);
   setTimeout(() => drop.remove(), 2000);
+}
+
+function createSplash(variant, x, y) {
+  const splash = document.createElement('div');
+  splash.classList.add('splash', variant === 'bad' ? 'splash--bad' : 'splash--good');
+  splash.style.left = `${x}px`;
+  splash.style.top = `${y}px`;
+  gameGrid.appendChild(splash);
+  setTimeout(() => splash.remove(), 650);
 }
 
 function checkMilestones(score) {
