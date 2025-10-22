@@ -5,18 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GOODCCI WATER</title>
 
-  <!-- Brand-adjacent fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="page-frame">
-    <!-- Centered, glowing logo -->
-    <header class="brand" aria-label="charity: water brand">
-      <div class="logo-wrap" aria-hidden="true">
-        <!-- If you have an icon-only file, you can swap this src to ./img/cw_mark_yellow.png -->
-        <img src="./img/cw_logo_horizontal.png" alt="charity: water" class="brand-logo" />
+    <!-- Clean centered glowing icon -->
+    <header class="brand">
+      <div class="logo-wrap">
+        <img src="./img/cw_logo.png" alt="charity: water logo" class="brand-logo" />
       </div>
     </header>
 
@@ -24,7 +21,6 @@
       <h1>GOODCCI WATER</h1>
       <p class="game-instructions">Collect clean drops before time runs out!</p>
 
-      <!-- The difficulty select will be injected by script.js just above this .stats block -->
       <section class="stats" aria-live="polite">
         <p>Drops Collected: <span id="current-cans">0</span></p>
         <p>Time Left: <span id="timer">30</span>s</p>
