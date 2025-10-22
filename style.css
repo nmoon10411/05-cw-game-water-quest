@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap');
 
-/* ---------- Base / Layout ---------- */
+/* ---------- Base Layout ---------- */
 body {
   font-family: 'Source Sans 3', sans-serif;
   background: linear-gradient(to bottom, #0f172a, #1e293b);
@@ -17,81 +17,39 @@ body {
   min-height: 100vh;
 }
 
-/* ---------- Centered, fancy logo ---------- */
+/* ---------- Centered Glowing Logo ---------- */
 .brand {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 18px 0 10px;
+  padding: 20px 0 8px;
 }
 
 .logo-wrap {
   position: relative;
   display: grid;
   place-items: center;
-  width: 70px;           /* tweak as you like */
+  width: 70px;
   height: 70px;
   border-radius: 18px;
-  isolation: isolate;    /* keeps glow behind nicely */
+  isolation: isolate;
   animation: pulse 2.4s ease-in-out infinite;
 }
 
-/* Crisp logo + soft halo */
 .brand-logo {
-  width: 48px;           /* tweak as you like */
+  width: 50px;
   height: auto;
-  filter: drop-shadow(0 0 12px rgba(247,201,72,.35));
+  filter: drop-shadow(0 0 20px rgba(247,201,72,0.6));
 }
 
-/* Rotating glow ring */
-.logo-wrap::after {
-  content: "";
-  position: absolute;
-  inset: -10px;
-  border-radius: 22px;
-  background: conic-gradient(from 0deg,
-    rgba(247,201,72,0) 0%,
-    rgba(247,201,72,.35) 85%,
-    rgba(247,201,72,0) 100%);
-  filter: blur(10px);
-  animation: spin 4s linear infinite;
-  z-index: -1;
-}
-
-/* Shiny sweep highlight */
-.logo-wrap::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: linear-gradient(120deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,.35) 25%,
-    rgba(255,255,255,0) 50%);
-  transform: translateX(-160%);
-  animation: sweep 3.2s ease-in-out infinite;
-  mix-blend-mode: overlay;
-}
-
-/* Animations */
+/* Soft pulse glow */
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(247,201,72,.40), 0 0 24px 6px rgba(247,201,72,.22); }
-  60%  { box-shadow: 0 0 0 18px rgba(247,201,72,0), 0 0 12px 4px rgba(247,201,72,.15); }
+  0%   { box-shadow: 0 0 0 0 rgba(247,201,72,.4), 0 0 20px 6px rgba(247,201,72,.3); }
+  60%  { box-shadow: 0 0 0 16px rgba(247,201,72,0), 0 0 12px 4px rgba(247,201,72,.15); }
   100% { box-shadow: 0 0 0 0 rgba(247,201,72,0), 0 0 0 0 rgba(247,201,72,0); }
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes sweep {
-  0%, 60% { transform: translateX(-160%); }
-  70%     { transform: translateX(160%); }
-  100%    { transform: translateX(160%); }
-}
 
-/* Respect reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  .logo-wrap, .logo-wrap::before, .logo-wrap::after { animation: none !important; }
-}
-
-/* ---------- Card / Panel ---------- */
+/* ---------- Main Container ---------- */
 .container {
   flex: 1;
   max-width: 760px;
@@ -101,12 +59,11 @@ body {
   border-radius: 16px;
   padding: 24px 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-  margin-bottom: 10px;
 }
 
 h1 {
   font-family: 'Montserrat', sans-serif;
-  color: #f7c948; /* charity: water yellow */
+  color: #f7c948;
   letter-spacing: 0.5px;
   margin: 8px 0 6px;
 }
@@ -116,7 +73,7 @@ h1 {
   color: #e2e8f0;
 }
 
-/* ---------- HUD ---------- */
+/* ---------- Game HUD ---------- */
 .stats {
   display: flex;
   justify-content: space-between;
@@ -125,7 +82,6 @@ h1 {
   font-size: 1.05rem;
 }
 
-/* Difficulty select (inserted by JS) */
 select {
   margin: 6px 0 12px;
   padding: 8px 10px;
@@ -136,7 +92,7 @@ select {
   font-family: 'Source Sans 3', sans-serif;
 }
 
-/* ---------- Game grid / items ---------- */
+/* ---------- Game Grid ---------- */
 .game-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -165,7 +121,7 @@ select {
   background: linear-gradient(180deg, #4b5563, #1f2937);
 }
 
-/* ---------- Feedback / controls ---------- */
+/* ---------- Controls / Feedback ---------- */
 .achievement {
   color: #f7c948;
   font-weight: 700;
